@@ -7,7 +7,8 @@ async function GenerateShortUrl(req, res) {
         return res.status(400).json({ error: 'URL is required' });
     }
 
-    const shortID = shortid(8);
+    const shortID = shortid();
+
     console.log(req.user._id);
     await URL.create({
         shortId: shortID,
@@ -22,7 +23,10 @@ async function GenerateShortUrl(req, res) {
 async function GetAnalytics(req, res) {
     const shortId = req.params.shortId;
     const result = await URL.findOne({ shortId });
-    return res.json({ totalClicks: result.visitHistory.length, analytics: result.visitHistory });
+    return res.json({
+        totalClicks: result.visitHistory.length,
+        analytics: result.visitHistory,
+    });
 }
 
 module.exports = {
