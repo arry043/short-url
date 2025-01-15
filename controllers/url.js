@@ -9,7 +9,6 @@ async function GenerateShortUrl(req, res) {
 
     const shortID = shortid();
 
-    console.log(req.user._id);
     await URL.create({
         shortId: shortID,
         redirectUrl: body.url,

@@ -2,7 +2,7 @@ const express = require('express');
 const { connectMongo } = require('./connnect');
 const URL = require('./models/url');
 const path = require('path');
-const { restrictToLoggedInUserOnly, checkAuth } = require('./middlewares/auth')
+const { checkForAuthentication, restrictTo } = require('./middlewares/auth')
 const cookieParser = require('cookie-parser');
 
 const app = express();
@@ -19,14 +19,15 @@ connectMongo('mongodb://127.0.0.1:27017/url-short').then(() => {
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(checkForAuthentication);
 
 app.set('view engine', 'ejs');
 app.set('views', path.resolve('./views'));
 
 
-app.use('/url', restrictToLoggedInUserOnly, urlRoutes);
+app.use('/url', restrictTo(["NORMAL"]), urlRoutes);
 app.use('/user', userRoute);
-app.use('/', checkAuth, staticRouter);
+app.use('/', staticRouter);
 
 
 app.get('/url/:shortId', async (req, res) => {
